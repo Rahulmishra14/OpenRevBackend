@@ -244,6 +244,56 @@ INVITATIONS = {
     ]
 }
 
+WEBFIELD = """// Webfield component
+return {
+  component: 'VenueHomepage',
+  properties: {
+    header: {
+      title: '2nd AI for Math Workshop @ ICML 2025',
+      subtitle: 'AI4MATH',
+      website: 'https://sites.google.com/view/ai4mathworkshopicml2025',
+      contact: 'ai4mathicml@gmail.com',
+      location: 'Vienna, Austria',
+      instructions: 'Please see the venue website for more information.',
+      date: 'Jul 18 2025',
+      deadline: 'Submission Start: Mar 18 2025 11:59PM UTC-0, Submission Deadline: Jun 21 2025 11:59AM UTC-0'
+    },
+     submission_id: 'ICML.cc/2025/Workshop/AI4MATH/-/Submission',
+    parentGroupId: 'ICML.cc/2025/Workshop',
+    "submission_id": "ICML.cc/2025/Workshop/AI4MATH/-/Submission",
+    "tabs": [
+        {"name": "Recent Activity", "type": "activity"}
+    ],
+
+
+  }
+}"""
+
+
+@api_view(['GET'])
+def notes_edits(request):
+    domain = request.GET.get('domain')
+    if domain == 'ICML.cc/2025/Workshop/AI4MATH':
+        return Response({
+            "notes": [
+                {
+                    "id": "AI4MATH-paper1",
+                    "invitation": "ICML.cc/2025/Workshop/AI4MATH/-/Submission",
+                    "signatures": ["ICML.cc/2025/Workshop/AI4MATH/Authors"],
+                    "readers": ["everyone"],
+                    "writers": ["ICML.cc/2025/Workshop/AI4MATH/Authors"],
+                    "content": {
+                        "title": "An Amazing Math AI Paper",
+                        "abstract": "This paper explores mathematical reasoning in AI.",
+                        "authors": ["Alice", "Bob"],
+                        "authorids": ["~Alice1", "~Bob1"]
+                    }
+                }
+            ]
+        })
+    else:
+        return Response({"notes": []})
+
 @api_view(['GET'])
 def groups_api(request):
     group_id = request.GET.get('id')
@@ -253,30 +303,67 @@ def groups_api(request):
         return Response(HOST_GROUP)
     elif group_id == 'ICML.cc/2025/Workshop/AI4MATH':
         return Response({
-            "groups": [{
-                "id": group_id,
-                "web": """// Webfield component
-    return {
-    component: 'GroupDirectory',
-    properties: {
-        title: '2nd AI for Math Workshop @ ICML 2025',
-        subtitle: 'Please see the venue website for more information.',
-        website: 'https://sites.google.com/view/ai4mathworkshopicml2025',
-        email: 'ai4mathicml@gmail.com',
-        date: 'Jul 18 2025',
-        submission_start_date: 'Mar 18 2025 11:59PM UTC-0',
-        submission_deadline: 'Jun 21 2025 11:59AM UTC-0',
-        call_for_submissions: true,
-        submissions: [],
-        activity: [],
-        venue_id: 'ICML.cc/2025/Workshop/AI4MATH'
-    }
-    }""",
-                "details": {
-                    "writable": True
-                }
-            }]
-        }, status=status.HTTP_200_OK)
+        "groups": [{
+            "id": group_id,
+            "signatures": ["~Super_User1"],
+            "signatories": [group_id],
+            "readers": ["everyone"],
+            "writers": [group_id],
+            "invitations": [
+                "OpenReview.net/-/Edit",
+                f"{group_id}/-/Edit"
+            ],
+            "domain": group_id,
+            "parent": "ICML.cc/2025/Workshop",
+            "details": {
+                "writable": True
+            },
+            "content": {
+                "title": {"value": "2nd AI for Math Workshop @ ICML 2025"},
+                "subtitle": {"value": "AI4MATH"},
+                "website": {"value": "https://sites.google.com/view/ai4mathworkshopicml2025"},
+                "contact": {"value": "ai4mathicml@gmail.com"},
+                "location": {"value": "Vienna, Austria"},
+                "instructions": {"value": "Please see the venue website for more information."},
+                "date": {"value": "Jul 18 2025"},
+                "deadline": {"value": "Submission Start: Mar 18 2025 11:59PM UTC-0, Submission Deadline: Jun 21 2025 11:59AM UTC-0"},
+                "submission_id": {"value": f"{group_id}/-/Submission"},
+                "parentGroupId": {"value": "ICML.cc/2025/Workshop"},
+                "meta_invitation_id": {"value": f"{group_id}/-/Edit"},
+                "submission_name": {"value": "Submission"},
+                "submission_venue_id": {"value": f"{group_id}/Submission"},
+                "withdrawn_venue_id": {"value": f"{group_id}/Withdrawn_Submission"},
+                "desk_rejected_venue_id": {"value": f"{group_id}/Desk_Rejected_Submission"},
+                "rejected_venue_id": {"value": f"{group_id}/Rejected_Submission"},
+                "public_submissions": {"value": False},
+                "submission_email_template": {
+                    "value": "Your submission to AI4MATH has been {{action}}.\n\nSubmission Number: {{note_number}} \n\nTitle: {{note_title}} \n\nTo view your submission, click here: https://openreview.net/forum?id={{note_forum}}"
+                },
+                "submission_email_pcs": {"value": False},
+                "program_chairs_id": {"value": f"{group_id}/Program_Chairs"},
+                "reviewers_id": {"value": f"{group_id}/Reviewers"},
+                "authors_id": {"value": f"{group_id}/Authors"},
+                "authors_name": {"value": "Authors"},
+                "withdraw_expiration_id": {"value": f"{group_id}/-/Withdraw_Expiration"},
+                "desk_reject_expiration_id": {"value": f"{group_id}/-/Desk_Reject_Expiration"},
+                "automatic_reviewer_assignment": {"value": True},
+                "review_name": {"value": "Official_Review"},
+                "review_email_pcs": {"value": False},
+                "comment_mandatory_readers": {"value": [f"{group_id}/Program_Chairs"]},
+                "comment_email_pcs": {"value": False},
+                "rebuttal_name": {"value": "Rebuttal"},
+                "reviewer_roles": {"value": ["Reviewers"]}
+            },
+            "submission_id": "ICML.cc/2025/Workshop/AI4MATH/-/Submission",
+            "tabs": [
+                {"name": "Recent Activity", "type": "activity"}
+            ],
+
+
+            "web": WEBFIELD
+        }]
+    }, status=status.HTTP_200_OK)
+
 
     else:
         return Response({"groups": []})
@@ -286,26 +373,75 @@ def invitations_api(request):
     invitee = request.GET.get('invitee')
     pastdue = request.GET.get('pastdue') == 'false'
     invitation_type = request.GET.get('type')
+    invitation_id = request.GET.get('id')
 
-    # Simulated active submissions
+    future_due = 1760000000000
+
+    # 🎯 SINGLE INVITATION BY ID
+    if invitation_id == 'ICML.cc/2025/Workshop/AI4MATH/-/Submission':
+        return Response({
+            "invitations": [
+                {
+                    "id": invitation_id,
+                    "signatures": ["ICML.cc/2025/Workshop/AI4MATH"],
+                    "readers": ["everyone"],
+                    "writers": ["ICML.cc/2025/Workshop/AI4MATH"],
+                    "invitees": ["everyone"],
+                    "multiReply": False,
+                    "duedate": future_due,
+                    "details": {
+                        "writable": True
+                    },
+                    "reply": {
+                        "readers": {"values": ["everyone"]},
+                        "writers": {"values-copied": ["authors"]},
+                        "signatures": {"values-regex": "~.*"},
+                        "content": {
+                            "title": {"order": 1, "value": "string"},
+                            "abstract": {"order": 2, "value": "string"},
+                            "authors": {"order": 3, "value": ["string"]}
+                        }
+                    }
+                }
+            ]
+        })
+
+    # 🎯 LIST ALL ACTIVE
     if invitee == '~' and pastdue and invitation_type == 'all':
         return Response({
             "invitations": [
                 {
                     "id": "ICML.cc/2025/Workshop/AI4MATH/-/Submission",
-                    "duedate": 1750000000000
+                    "duedate": future_due,
+                    "details": {"writable": True},
+                    "reply": {
+                        "readers": {"values": ["everyone"]},
+                        "writers": {"values-copied": ["authors"]},
+                        "signatures": {"values-regex": "~.*"},
+                        "content": {
+                            "title": {"order": 1, "value": "string"},
+                            "abstract": {"order": 2, "value": "string"},
+                            "authors": {"order": 3, "value": ["string"]}
+                        }
+                    }
                 },
                 {
                     "id": "GSCL.cc/2025/Workshop/CPSS/-/Submission",
-                    "duedate": 1750200000000
+                    "duedate": 1750200000000,
+                    "details": {"writable": True}
                 },
                 {
                     "id": "IEEE.org/ISWC/2025/-/Submission",
-                    "duedate": 1750400000000
+                    "duedate": 1750400000000,
+                    "details": {"writable": True}
                 }
             ]
         })
+
     return Response({"invitations": []})
+
+
+
 
 
 # @api_view(['GET'])

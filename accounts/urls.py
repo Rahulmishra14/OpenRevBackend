@@ -1,5 +1,5 @@
 from django.urls import path
-from .views import signup_api, login_api,user_detail_api, profile_list_api, profile_detail_api,groups_api, invitations_api, open_submissions_api
+from .views import signup_api, login_api,user_detail_api, profile_list_api, profile_detail_api,groups_api, invitations_api, open_submissions_api,notes_edits
 
 urlpatterns = [
     path('signup/', signup_api, name='signup_api'),
@@ -10,5 +10,6 @@ urlpatterns = [
     path('groups', groups_api),
     path('api/open_submissions/', open_submissions_api),
     path('invitations', invitations_api),
+    path('notes/edits', notes_edits),
     #  path('api/group/', group_detail_api),
 ]
