@@ -8,6 +8,7 @@ from rest_framework.response import Response
 from django.core.validators import validate_email
 from django.core.exceptions import ValidationError
 from rest_framework import status
+from rest_framework.authtoken.models import Token
 
 @api_view(['POST'])
 @permission_classes([AllowAny])
@@ -59,18 +60,24 @@ def login_api(request):
     if not email or not password:
         return Response({'error': 'Email and password are required'}, status=status.HTTP_400_BAD_REQUEST)
 
-    # Get the user based on email
     try:
         user_obj = User.objects.get(email=email)
     except User.DoesNotExist:
         return Response({'error': 'Invalid credentials'}, status=status.HTTP_401_UNAUTHORIZED)
 
-    # Use the username from the user object to authenticate
     user = authenticate(request, username=user_obj.username, password=password)
 
     if user is not None:
         login(request, user)
-        return Response({'message': 'Login successful'}, status=status.HTTP_200_OK)
+        token, _ = Token.objects.get_or_create(user=user)
+        user_data = {
+            'id': user.id,
+            'username': user.username,
+            'email': user.email,
+            'first_name': user.first_name,
+            'last_name': user.last_name
+        }
+        return Response({'message': 'Login successful', 'user': user_data, 'token': token.key}, status=status.HTTP_200_OK)
     else:
         return Response({'error': 'Invalid credentials'}, status=status.HTTP_401_UNAUTHORIZED)
     
